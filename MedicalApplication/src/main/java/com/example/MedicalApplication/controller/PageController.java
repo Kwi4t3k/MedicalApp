@@ -33,7 +33,7 @@ public class PageController {
 
     @GetMapping("/home")
     public String homeAfterLogin() {
-        return "index";
+        return "main";
     }
 
     @GetMapping("/profile")
