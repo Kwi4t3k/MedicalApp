@@ -1,265 +1,402 @@
 /* =========================
-   MEDICATIONS PAGE
+   MEDICATIONS (FIGMA PANEL)
    ========================= */
-body {
-    overflow-y: hidden;
+
+/* zostawiasz klasę z body */
+.no-scroll-body{
+    overflow: hidden;
 }
 
+/* tło jak figma (bardziej “jasne” od dołu) */
 .meds{
-    padding: 2.2rem 0 3rem;
     background: linear-gradient(180deg, rgba(83,98,158,.45) 0%, rgba(46,36,72,.92) 100%);
-    min-height: 100vh;
+    /* wysokość strony pod topbar */
+    min-height: calc(100vh - var(--topbar-h));
+    padding: 35px 0 35px;
 }
 
-.meds__container{
-    margin-top: 1.2rem;
-}
-
-/* duża fioletowa karta */
-.meds-card{
-    background: rgba(71, 52, 114, .82);
-    border: 1px solid rgba(214,244,237,.14);
-    border-radius: .9rem;
-    padding: 1.35rem;
-    box-shadow: 0 18px 45px rgba(0,0,0,.22);
-}
-
-/* dwie kolumny jak na screenie */
-.meds-grid{
-    display: grid;
-    grid-template-columns: 360px 1fr;
-    gap: 1.4rem;
-    align-items: stretch;
-}
-
-/* LEWA */
-.meds-left{
-    background: rgba(0,0,0,.06);
-    border-radius: .8rem;
-    padding: 1.2rem;
-}
-
-.meds-left__title{
-    margin: 0 0 .9rem 0;
-    color: #fff;
-    font-size: 2rem;
-    font-weight: 900;
-    letter-spacing: .01em;
-}
-
-.meds-search{
-    position: relative;
-    margin: .4rem 0 1rem;
-}
-
-.meds-search__input{
+/* wrapper (tylko do centrowania panelu) */
+.meds-shell{
     width: 100%;
-    border: 0;
-    outline: none;
-    border-radius: .55rem;
-    padding: .85rem 3rem .85rem 1rem;
-    background: #fff;
-    color: #473472;
-    font-size: 1.35rem;
-    font-weight: 700;
 }
 
-.meds-search__dot{
-    position: absolute;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 28px;
-    height: 28px;
-    border-radius: 999px;
-    background: #20c36a;
+/* zewnętrzny biały panel (jak w figmie: 1396x812, radius 10) */
+.meds-panel{
+    width: min(1396px, calc(100% - 38px));
+    margin: 0 auto;
+    height: calc(100vh - var(--topbar-h) - var(--meds-vpad));
 }
 
-.meds-list{
+/* stała wysokość panelu zależna od okna */
+.meds-panel__inner{
+    height: 100%;
+    background: #473472;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* siatka 2 kolumny jak figma: lewy 465px */
+.meds-grid{
+    height: 100%;
     display: grid;
-    gap: .6rem;
-    max-height: 520px;
-    overflow: auto;
-    padding-right: .2rem;
+    grid-template-columns: 465px 1fr;
 }
 
-/* element listy */
+/* =========================
+   LEFT (purple list)
+   ========================= */
+.meds-left{
+    background: #473472;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+}
+
+/* biała belka “Wybierz lek…” */
+.meds-left__select{
+    padding: 14px 18px;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.1;
+    text-align: center;
+}
+
+/* lista scrollowana (stała wysokość panelu) */
+.meds-list{
+    overflow: auto;
+    padding: 18px 16px;
+    margin: 0;
+    background: #533D85;
+    min-height: 0;
+}
+
+.meds-list::-webkit-scrollbar{ width: 10px; }
+.meds-list::-webkit-scrollbar-thumb{
+    background: rgba(255,255,255,.22);
+    border-radius: 999px;
+}
+.meds-list::-webkit-scrollbar-track{ background: transparent; }
+
+/* element listy – w figmie to bardziej “tekst + kropka” */
 .meds-item{
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: .8rem;
-    padding: .8rem 1rem;
-    border-radius: .55rem;
-    color: #fff;
-    background: rgba(255,255,255,.06);
+    gap: 16px;
     text-decoration: none;
-    border: 1px solid rgba(255,255,255,.06);
+    padding: 2px 6px;
+    color: #fff;
 }
 
-.meds-item:hover{
-    background: rgba(255,255,255,.10);
-}
-
+/* aktywny – biała “wstawka” tylko z lewej strony (rounded left) */
 .meds-item--active{
     background: #fff;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    padding: 10px 16px;
+    margin-right: 12px;
+}
+
+/* nazwy leków jak figma: Helvetica 40 */
+.meds-item__name{
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 40px;
+    font-weight: 400;
+    line-height: 1;
+    color: #fff;
+    white-space: nowrap;
+}
+
+/* aktywny tekst w fiolet */
+.meds-item--active .meds-item__name{
     color: #473472;
 }
 
-.meds-item__name{
-    font-size: 1.5rem;
-    font-weight: 800;
+.meds-item__left{
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.meds-item__status{
-    width: 26px;
-    height: 26px;
-    border-radius: 999px;
+/* kłódka */
+.meds-item__lock{
+    font-size: 22px;
+    line-height: 1;
+    color: #000;
+}
+
+/* kropki statusu jak figma: 39x37, pełne koło */
+.meds-dot{
+    width: 39px;
+    height: 37px;
+    border-radius: 9999px;
     flex: 0 0 auto;
 }
 
-.meds-item__status--ok{ background: #20c36a; }
-.meds-item__status--bad{ background: #c51f1f; }
+.meds-dot--green{ background: #1BC768; }
+.meds-dot--red{ background: #C71B1B; }
+.meds-dot--blue{ background: #2A79FF; }
 
-/* PRAWA */
-.meds-right{
-    background: rgba(0,0,0,.06);
-    border-radius: .8rem;
-    padding: 1.2rem 1.4rem;
-    position: relative;
+/* przycisk Dodaj – w figmie był “prostokąt” na dole */
+.meds-left__bottom{
+    margin-top: 0;
 }
 
+.meds-left__add{
+    width: 100%;
+    height: 84px;
+    border: 0;
+    -moz-border-radius-bottomleft: 7px;
+    background: #392B58;
+    color: #fff;
+    font-weight: 700;
+    font-size: 30px;
+    cursor: pointer;
+    text-align: center;
+}
+
+/* =========================
+   RIGHT (content)
+   ========================= */
+.meds-right{
+    position: relative;
+    padding: 10px 42px 26px;
+    height: 100%;
+}
+
+/* pacjent na górze (u Ciebie w figmie tego nie było centralnie w panelu meds,
+   ale zostawiam i ustawiam neutralnie) */
 .meds-right__header{
     display: flex;
     justify-content: center;
-    margin-bottom: 1rem;
+    /*margin-top: 4px;*/
 }
 
 .meds-right__patient{
-    color: #fff;
-    font-weight: 900;
-    font-size: 2.7rem;
-    letter-spacing: .01em;
-    text-align: center;
-}
-
-.meds-right__title{
-    margin: 1.2rem 0 .9rem;
-    color: #fff;
-    font-weight: 900;
-    font-size: 3.2rem;
-}
-
-/* gdy nic nie wybrane */
-.meds-empty{
-    padding: 2.5rem 1rem;
-    color: rgba(255,255,255,.85);
+    color: #ffffff;
     font-weight: 700;
-    font-size: 1.2rem;
+    font-size: 2rem;
     text-align: center;
 }
 
-/* formularz pól */
-.meds-fields{
-    display: grid;
-    gap: .9rem;
-    margin: .6rem 0 1.2rem;
-}
-
-.meds-field{
-    background: #fff;
-    border-radius: .55rem;
-    border: 2px solid rgba(255,255,255,.0);
-    padding: .9rem 1rem;
-    display: grid;
-    grid-template-columns: 160px 1fr;
-    align-items: center;
-    column-gap: 1rem;
-}
-
-.meds-field__label{
+/* tytuł leku (Helvetica 60) */
+.meds-right__title{
+    margin: 24px 0 0;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 60px;
+    font-weight: 700;
     color: #473472;
-    font-weight: 900;
-    font-size: 1.6rem;
 }
 
-.meds-field__input{
+/* puste info */
+.meds-empty{
+    margin-top: 40px;
+    font-size: 22px;
+    color: rgba(0,0,0,.7);
+    text-align: center;
+}
+
+/* VIEW boxes: 797px, border 4px purple, radius 10 */
+.meds-view{
+    margin-top: 56px;
+    display: grid;
+    gap: 18px;
+    width: min(797px, 100%);
+}
+
+.meds-box{
+    background: #fff;
+    border: 4px solid #473472;
+    border-radius: 10px;
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    min-height: 90px;
+    overflow: hidden;
+}
+
+.meds-box__label,
+.meds-box__value{
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: 18px 14px;
+
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: #473472;
+}
+
+/* EDIT – niech wygląda jak Twoja wersja “formularzowa”, ale spójna */
+.meds-edit{
+    display: none;
+    margin-top: 28px;
+    width: min(900px, 100%);
+}
+
+.meds-edit__row{
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 18px;
+    align-items: center;
+    margin: 14px 0;
+}
+
+.meds-edit__label{
+    font-size: 22px;
+    font-weight: 700;
+    color: #473472;
+}
+
+.meds-edit__input{
     width: 100%;
+    height: 56px;
     border: 0;
     outline: none;
-    background: transparent;
+    background: #e6e6e6;
+    border-radius: 6px;
+    padding: 0 14px;
+    font-size: 20px;
+    font-weight: 700;
     color: #473472;
-    font-weight: 900;
-    font-size: 1.6rem;
 }
 
-.meds-field__input:disabled{
-    opacity: 1;
-    cursor: default;
-}
-
-/* meta info */
+/* META (30px fiolet) */
 .meds-meta{
-    margin-top: .6rem;
+    margin-top: 34px;
     display: grid;
-    gap: 1rem;
+    gap: 16px;
+    color: #473472;
+    font-size: 30px;
+    font-weight: 500;
+    width: min(900px, 100%);
 }
 
 .meds-meta__row{
     display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 1rem;
+    grid-template-columns: 420px 1fr;
     align-items: center;
-    color: #fff;
 }
 
-.meds-meta__label{
-    font-size: 1.35rem;
-    font-weight: 700;
-    opacity: .95;
+.meds-meta__label{ text-align: left; }
+.meds-meta__value{ text-align: left; }
+
+/* WARNING (drugi screen: banner na dole, biały środek, tło #615876) */
+.meds-warning{
+    position: absolute;
+    left: 42px;
+    right: 42px;
+    bottom: 26px;
+
+    height: 80px;
+    background: #615876;
+    border-radius: 1px;
+    display: grid;
+    place-items: center;
 }
 
-.meds-meta__value{
-    font-size: 1.35rem;
+.meds-warning::before{
+    content: "";
+    position: absolute;
+    inset: 7px;
+    background: #fff;
+    border-radius: 7px;
+    box-shadow: 0 4px 4px rgba(0,0,0,.25);
+}
+
+.meds-warning > *{
+    position: relative;
+    z-index: 1;
+}
+
+.meds-warning{
+    font-size: 24px;
+    font-weight: 500;
+    color: #000;
+    text-align: center;
+    padding: 0 14px;
+}
+
+.meds-warning__icon{
+    color: #C71B1B;
     font-weight: 900;
+    font-size: 26px;
+    margin: 0 12px;
 }
 
-/* akcje na dole */
+/* ACTIONS (przyciski na dole jak figma) */
 .meds-actions{
-    margin-top: 2.2rem;
+    position: absolute;
+    left: 42px;
+    right: 42px;
+    bottom: 26px;
+
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 1rem;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+/* jeśli jest warning, chowamy actions (żeby się nie nakładało) */
+.meds-warning + .meds-actions,
+.meds-warning ~ .meds-actions{
+    display: none;
 }
 
 .meds-actions__left,
 .meds-actions__right{
     display: flex;
-    gap: .8rem;
+    gap: 18px;
 }
 
 .meds-btn{
-    min-width: 150px;
-    border-radius: .25rem;
-    border: 0;
-    padding: .8rem 1.2rem;
-    font-weight: 900;
+    width: 167px;
+    height: 60px;
+    background: #7E7495;
+    border: 4px solid #7E7495;
+    border-radius: 1px;
+    color: #fff;
+    font-size: 30px;
+    font-weight: 500;
     cursor: pointer;
-    font-size: 1.2rem;
 }
 
-.meds-btn--ghost{
-    background: rgba(255,255,255,.16);
-    color: #fff;
+/* zachowujemy Twoje klasy (nie komplikuję) */
+.meds-btn--ghost{ }
+.meds-btn--primary{ }
+.meds-btn--soft{ }
+
+/* toggle edycji */
+.meds-form.is-editing .meds-view{ display: none; }
+.meds-form.is-editing .meds-edit{ display: block; }
+
+/* =========================
+   Responsive (tylko awaryjnie)
+   ========================= */
+@media (max-width: 1100px){
+    .meds-panel__inner{
+        height: auto;
+        min-height: 740px;
+    }
+    .meds-grid{
+        grid-template-columns: 1fr;
+    }
+    .meds-left{
+        grid-template-rows: auto auto auto;
+    }
+    .meds-warning,
+    .meds-actions{
+        position: static;
+        margin-top: 28px;
+    }
 }
 
-.meds-btn--soft{
-    background: rgba(255,255,255,.20);
-    color: #fff;
+:root{
+    --topbar-h: 129px;
+    --meds-vpad: 60px; /* padding górny+dolny w .meds (np. 35 + 25) */
 }
 
-.meds-btn--primary{
-    background: #fff;
-    color: #473472;
+.meds__container{
+    height: calc(100vh - var(--topbar-h));
+    display: flex;
 }

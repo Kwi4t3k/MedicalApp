@@ -38,6 +38,9 @@
                 Wylogowano pomyślnie.
             </div>
 
+            <div class="login-alert login-alert--ok" th:if="${msg}" th:text="${msg}"></div>
+            <div class="login-alert login-alert--err" th:if="${error}" th:text="${error}"></div>
+
             <form class="login-form" th:action="@{/perform_login}" method="post">
                 <!-- Email -->
                 <div class="field">

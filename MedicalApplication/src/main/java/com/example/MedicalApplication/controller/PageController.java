@@ -1,5 +1,6 @@
 package com.example.MedicalApplication.controller;
 
+import com.example.MedicalApplication.repository.MedicationRepository;
 import com.example.MedicalApplication.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequiredArgsConstructor
 public class PageController {
     private final UserRepository userRepository;
+    private final MedicationRepository medicationRepository;
 
     @GetMapping("/login")
     public String loginPage() {
@@ -71,11 +73,15 @@ public class PageController {
         return "redirect:/profile";
     }
 
-    @GetMapping("/medications")
-    public String medications(Model model, Authentication authentication) {
-        var user = userRepository.findByEmail(authentication.getName()).orElseThrow();
-        model.addAttribute("welcomeName", user.getFirstName());
-
-        return "medications";
-    }
+//    @GetMapping("/medications")
+//    public String medications(Model model, Authentication authentication) {
+//        var user = userRepository.findByEmail(authentication.getName()).orElseThrow();
+//        var meds = medicationRepository.findByPatient(user);
+//
+//        model.addAttribute("welcomeName", user.getFirstName());
+//        model.addAttribute("userFullName", user.getFullName());
+//        model.addAttribute("medications", meds);
+//
+//        return "medications";
+//    }
 }
