@@ -1,22 +1,32 @@
 package com.example.MedicalApplication.controller;
 
+import com.example.MedicalApplication.model.Medication;
+import com.example.MedicalApplication.model.MedicationStatus;
+import com.example.MedicalApplication.model.User;
 import com.example.MedicalApplication.repository.MedicationRepository;
 import com.example.MedicalApplication.repository.UserRepository;
+import com.example.MedicalApplication.service.MedicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
 public class PageController {
     private final UserRepository userRepository;
     private final MedicationRepository medicationRepository;
+    private final MedicationService medicationService;
 
     @GetMapping("/login")
     public String loginPage() {
@@ -73,15 +83,38 @@ public class PageController {
         return "redirect:/profile";
     }
 
-//    @GetMapping("/medications")
-//    public String medications(Model model, Authentication authentication) {
-//        var user = userRepository.findByEmail(authentication.getName()).orElseThrow();
-//        var meds = medicationRepository.findByPatient(user);
-//
-//        model.addAttribute("welcomeName", user.getFirstName());
-//        model.addAttribute("userFullName", user.getFullName());
-//        model.addAttribute("medications", meds);
-//
-//        return "medications";
-//    }
+    @GetMapping("/status")
+    public String showStatusPage(Model model, Authentication auth) {
+        User user = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+
+        List<Medication> meds = medicationService.getMedicationsForUser(user);
+
+        long total = meds.size();
+        long taken = meds.stream().filter(m -> m.getStatus() == MedicationStatus.TAKEN).count();
+        long scheduled = total - taken;
+        int pct = (total == 0) ? 0 : (int) Math.round((taken * 100.0) / total);
+
+        model.addAttribute("welcomeName", user.getFullName());
+        model.addAttribute("medications", meds);
+
+        model.addAttribute("total", total);
+        model.addAttribute("takenCount", taken);
+        model.addAttribute("scheduledCount", scheduled);
+        model.addAttribute("pct", pct);
+
+        model.addAttribute("today", LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+
+        return "status";
+    }
+
+    @PostMapping("/status/{id}/take")
+    public String markTaken(@PathVariable Long id, Authentication auth) {
+        User user = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+
+        medicationService.markAsTaken(user, id);
+        return "redirect:/status";
+    }
+
 }
