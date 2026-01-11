@@ -22,7 +22,6 @@ public class DoctorMedicationController {
     private final MedicationService medicationService;
     private final ReminderService reminderService;
 
-    //lekarz przypisuje lek pacjentowi
     @PostMapping("/{doctorId}/patients/{patientId}/medications")
     @ResponseStatus(HttpStatus.CREATED)
     public Medication prescribeMedication(@PathVariable Long doctorId,
