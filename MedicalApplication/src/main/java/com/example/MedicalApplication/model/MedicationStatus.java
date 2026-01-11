@@ -1,2 +1,7 @@
-package com.example.MedicalApplication.model;public class MedicationStatus {
+package com.example.MedicalApplication.model;
+
+public enum MedicationStatus {
+    SCHEDULED,
+    TAKEN
+
 }
