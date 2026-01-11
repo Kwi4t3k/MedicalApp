@@ -20,17 +20,11 @@
         <nav class="nav">
             <a class="nav__link nav__link--active" th:href="@{/home}">Strona główna</a>
             <a class="nav__link" th:href="@{/profile}">Profil</a>
-            <a class="nav__link" href="#">Status &amp; przegląd</a>
+            <a class="nav__link" th:href="@{/status}">Status &amp; przegląd</a>
             <a class="nav__link" th:href="@{/medications}">Zarządzanie lekami</a>
             <a class="nav__link" href="#">Zamienniki</a>
             <a class="nav__link" th:href="@{/doctor}" sec:authorize="hasRole('DOCTOR')">Dla lekarza</a>
         </nav>
-
-<!--        do sprawdzenia danych użytkownika-->
-<!--        <div style="color:#fff; font-size:12px;">-->
-<!--            auth: <span sec:authentication="name"></span> |-->
-<!--            roles: <span sec:authentication="principal.authorities"></span>-->
-<!--        </div>-->
 
         <div class="user-menu">
             <button class="user-menu__btn" type="button" aria-haspopup="true" aria-expanded="false">
