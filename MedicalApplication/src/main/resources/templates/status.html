@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Status & Przegląd</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/status.css}">
+</head>
+
+<body class="no-scroll-body">
+
+<header class="topbar">
+    <div class="container topbar__inner">
+        <div class="brand">Logo</div>
+
+        <div class="topbar__greeting">
+            Witaj <span th:text="${welcomeName}">Imię</span>, zdrowego dnia!
+        </div>
+
+        <nav class="nav">
+            <a class="nav__link" th:href="@{/home}">Strona główna</a>
+            <a class="nav__link" th:href="@{/profile}">Profil</a>
+            <a class="nav__link nav__link--active" th:href="@{/status}">Status &amp; przegląd</a>
+            <a class="nav__link" th:href="@{/medications}">Zarządzanie lekami</a>
+            <a class="nav__link" href="#">Zamienniki</a>
+            <a class="nav__link" th:href="@{/doctor}" sec:authorize="hasRole('DOCTOR')">Dla lekarza</a>
+        </nav>
+
+        <div class="user-menu">
+            <button class="user-menu__btn" type="button" aria-haspopup="true" aria-expanded="false">
+                <span class="user-menu__label">Ustawienia</span>
+                <span class="user-menu__icon" aria-hidden="true">⚙️</span>
+            </button>
+
+            <div class="user-menu__dropdown" role="menu" aria-label="Ustawienia konta">
+                <a class="user-menu__item" role="menuitem" href="/change-password">Zmień hasło</a>
+                <form th:action="@{/logout}" method="post" class="user-menu__logout">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" class="user-menu__item user-menu__item--danger user-menu__btnlink">
+                        Wyloguj się
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section class="medication-status">
+    <div class="status-wrap">
+
+        <!-- PANEL: STATUS & PRZEGLĄD -->
+        <div class="overview-panel">
+            <div class="status-header">
+                <div>
+                    <h1>Status &amp; Przegląd</h1>
+                    <p class="status-subtitle">Twoje leki na dziś — oznaczaj przyjęcie jednym kliknięciem.</p>
+                </div>
+                <div class="status-date" th:text="${today}">01.01.2026</div>
+            </div>
+
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="summary-label">Łącznie</div>
+                    <div class="summary-value" th:text="${total}">0</div>
+                    <div class="summary-hint">zaplanowane dawki</div>
+                </div>
+
+                <div class="summary-card summary-card--good">
+                    <div class="summary-label">Przyjęte</div>
+                    <div class="summary-value" th:text="${takenCount}">0</div>
+                    <div class="summary-hint">dzisiaj</div>
+                </div>
+
+                <div class="summary-card summary-card--warn">
+                    <div class="summary-label">Do przyjęcia</div>
+                    <div class="summary-value" th:text="${scheduledCount}">0</div>
+                    <div class="summary-hint">pozostało</div>
+                </div>
+            </div>
+
+            <div class="progress-card" th:if="${total > 0}">
+                <div class="progress-top">
+                    <div class="progress-title">Postęp dnia</div>
+                    <div class="progress-meta">
+                        <span th:text="${takenCount}">0</span>/<span th:text="${total}">0</span>
+                        <span class="progress-percent" th:text="${pct} + '%'">0%</span>
+                    </div>
+                </div>
+
+                <div class="progress-bar" role="progressbar"
+                     th:attr="aria-valuenow=${pct}, aria-valuemin=0, aria-valuemax=100">
+                    <div class="progress-fill" th:style="|width:${pct}%|"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LISTA LEKÓW -->
+        <div class="list-panel">
+            <div class="list-header">
+                <h2 class="list-title">Lista leków</h2>
+                <div class="list-meta">
+                    <span th:text="${scheduledCount}">0</span> do przyjęcia •
+                    <span th:text="${takenCount}">0</span> przyjęte
+                </div>
+            </div>
+
+            <div class="empty-card" th:if="${#lists.isEmpty(medications)}">
+                <div class="empty-title">Brak leków do wyświetlenia</div>
+                <div class="empty-text">Dodaj lek w zakładce „Zarządzanie lekami”, a tutaj pojawi się plan i statusy.</div>
+                <a class="empty-cta" th:href="@{/medications}">Przejdź do zarządzania lekami</a>
+            </div>
+
+            <!-- scroll -->
+            <div class="med-list-scroll" th:if="${!#lists.isEmpty(medications)}">
+                <div class="medication-list">
+                    <div class="medication-item"
+                         th:each="med : ${medications}"
+                         th:classappend="${med.status.name() == 'TAKEN'} ? ' is-taken' : ' is-pending'">
+
+                        <div class="medication-status-circle"
+                             th:classappend="${med.status.name() == 'TAKEN'} ? ' green' : ' red'"></div>
+
+                        <div class="medication-main">
+                            <div class="medication-top">
+                                <div class="medication-name" th:text="${med.name}">Nazwa leku</div>
+                            </div>
+
+                            <div class="medication-meta">
+                                <span class="chip" th:text="'Dawka: ' + ${med.dose}">Dawka</span>
+                                <span class="chip" th:text="'Godzina: ' + ${#temporals.format(med.intakeTime, 'HH:mm')}">Godzina</span>
+
+                                <span class="chip chip--status"
+                                      th:classappend="${med.status.name() == 'TAKEN'} ? ' chip--taken' : ' chip--scheduled'"
+                                      th:text="${med.status.name() == 'TAKEN'} ? 'Przyjęty' : 'Do przyjęcia'">
+                                    Do przyjęcia
+                                </span>
+                            </div>
+                        </div>
+
+                        <form th:action="@{|/status/${med.id}/take|}" method="post" class="medication-action">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <button class="status-button" type="submit" th:disabled="${med.status.name() == 'TAKEN'}">
+                                Przyjęto
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<script>
+    (function () {
+        const topbar = document.querySelector('.topbar');
+        const root = document.documentElement;
+
+        function setTopbarOffset() {
+            if (!topbar) return;
+            root.style.setProperty('--topbar-offset', topbar.offsetHeight + 'px');
+        }
+
+        window.addEventListener('load', setTopbarOffset);
+        window.addEventListener('resize', setTopbarOffset);
+        setTopbarOffset();
+    })();
+</script>
+
+</body>
+</html>
