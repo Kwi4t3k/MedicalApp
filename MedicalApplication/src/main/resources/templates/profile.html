@@ -4,23 +4,25 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Aplikacja medyczna - profil</title>
+
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/profile.css}">
 </head>
 
 <body class="profile-body">
 
 <header class="topbar">
-    <div class="container topbar__inner topbar__inner--profile">
+    <div class="container topbar__inner">
         <div class="brand">Logo</div>
 
         <div class="topbar__greeting">
             Witaj <span th:text="${welcomeName}">Imię</span>, zdrowego dnia!
         </div>
 
-        <nav class="nav nav--profile">
+        <nav class="nav">
             <a class="nav__link" th:href="@{/home}">Strona główna</a>
             <a class="nav__link nav__link--active" th:href="@{/profile}">Profil</a>
-            <a class="nav__link" href="#">Status &amp; przegląd</a>
+            <a class="nav__link" th:href="@{/status}">Status &amp; przegląd</a>
             <a class="nav__link" th:href="@{/medications}">Zarządzanie lekami</a>
             <a class="nav__link" href="#">Zamienniki</a>
             <a class="nav__link" th:href="@{/doctor}" sec:authorize="hasRole('DOCTOR')">Dla lekarza</a>
@@ -79,7 +81,6 @@
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
                         <div class="profile-fields">
-
                             <div class="profile-field">
                                 <label>Data urodzenia</label>
                                 <input data-editable="1" class="profile-input" type="date"
@@ -98,7 +99,6 @@
                                           name="description" rows="4"
                                           th:text="${description}" placeholder="Krótki opis..."></textarea>
                             </div>
-
                         </div>
 
                         <div class="profile-actions">
@@ -107,7 +107,6 @@
                             <button id="saveBtn" class="profile-btn profile-btn--primary" type="submit">Zapisz</button>
                         </div>
                     </form>
-
                 </div>
 
             </div>
@@ -133,7 +132,7 @@
             saveBtn.hidden = !on;
         }
 
-        //start: podgląd
+        // start: podgląd
         setEditing(false);
 
         editBtn.addEventListener('click', () => setEditing(true));
