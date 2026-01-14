@@ -61,11 +61,126 @@
                     Ty zadbaj o przyjmowanie leków, a pamięć o nich zostaw nam.
                 </p>
 
-                <form class="search">
+                <form class="search" th:action="@{/medicationsInfo}" method="get" autocomplete="off">
                     <span class="search__icon" aria-hidden="true">🔎</span>
-                    <input class="search__input" type="text" placeholder="znajdź lek na ból istnienia" />
-                    <button class="search__btn" type="button">Szukaj leku</button>
+
+                    <div class="search__field">
+                        <input
+                                id="medicineSearch"
+                                name="name"
+                                class="search__input"
+                                type="text"
+                                placeholder="znajdź lek na ból istnienia"
+                                aria-label="Wyszukaj lek"
+                                aria-autocomplete="list"
+                                aria-controls="medicineSuggest"
+                                aria-expanded="false"
+                        />
+
+                        <!-- dropdown z sugestiami -->
+                        <div id="medicineSuggest" class="search__suggest" role="listbox" aria-label="Sugestie leków"></div>
+                    </div>
+
+                    <button class="search__btn" type="submit">Szukaj leku</button>
                 </form>
+
+                <script>
+                    (() => {
+                        const input = document.getElementById('medicineSearch');
+                        const box = document.getElementById('medicineSuggest');
+
+                        let lastQuery = '';
+                        let abortCtrl = null;
+
+                        function closeSuggest() {
+                            box.classList.remove('is-open');
+                            box.innerHTML = '';
+                            input.setAttribute('aria-expanded', 'false');
+                        }
+
+                        function openSuggest() {
+                            box.classList.add('is-open');
+                            input.setAttribute('aria-expanded', 'true');
+                        }
+
+                        function escapeHtml(s) {
+                            return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+                        }
+
+                        async function loadSuggestions(q) {
+                            if (abortCtrl) abortCtrl.abort();
+                            abortCtrl = new AbortController();
+
+                            const resp = await fetch(`/api/medicines/suggest?q=${encodeURIComponent(q)}&limit=50`, {
+                                signal: abortCtrl.signal
+                            });
+
+                            if (!resp.ok) return [];
+                            return await resp.json();
+                        }
+
+                        function render(list, q) {
+                            if (!list || list.length === 0) {
+                                box.innerHTML = `<div class="search__suggestEmpty">Brak pasujących leków</div>`;
+                                openSuggest();
+                                return;
+                            }
+
+                            const items = list.map(name => {
+                                // opcjonalnie: proste pogrubienie dopasowania na początku
+                                const safe = escapeHtml(name);
+                                const safeQ = escapeHtml(q);
+                                const html = safe.toLowerCase().startsWith(q.toLowerCase())
+                                    ? `<strong>${safe.slice(0, q.length)}</strong>${safe.slice(q.length)}`
+                                    : safe;
+
+                                return `<button type="button" class="search__suggestItem" role="option" data-value="${safe}">
+                <span class="search__suggestText">${html}</span>
+              </button>`;
+                            }).join('');
+
+                            box.innerHTML = items;
+                            openSuggest();
+                        }
+
+                        input.addEventListener('input', async () => {
+                            const q = input.value.trim();
+                            if (q.length < 1) {
+                                closeSuggest();
+                                return;
+                            }
+                            if (q === lastQuery) return;
+                            lastQuery = q;
+
+                            try {
+                                const list = await loadSuggestions(q);
+                                render(list, q);
+                            } catch (e) {
+                                // abort jest normalny podczas szybkiego pisania
+                                if (e.name !== 'AbortError') closeSuggest();
+                            }
+                        });
+
+                        // klik na sugestię
+                        box.addEventListener('click', (e) => {
+                            const btn = e.target.closest('.search__suggestItem');
+                            if (!btn) return;
+                            input.value = btn.getAttribute('data-value') || '';
+                            closeSuggest();
+                            input.focus();
+                        });
+
+                        // ESC zamyka listę
+                        input.addEventListener('keydown', (e) => {
+                            if (e.key === 'Escape') closeSuggest();
+                        });
+
+                        // klik poza polem zamyka listę
+                        document.addEventListener('click', (e) => {
+                            if (!e.target.closest('.search')) closeSuggest();
+                        });
+                    })();
+                </script>
 
                 <!-- opcjonalny watermark "Pomocność" -->
                 <div class="hero__bgText">Polska jakość</div>
@@ -100,7 +215,7 @@
                         <li>Sprawdzaj tańsze zamienniki leków</li>
                     </ul>
 
-                    <a class="btn btn--outline btn--mint" href="#">Otwórz panel pacjenta →</a>
+                    <a class="btn btn--outline btn--mint" th:href="@{/medications}">Otwórz panel pacjenta →</a>
                 </div>
 
                 <div class="feature__media">
@@ -120,7 +235,7 @@
                         <li>Przeglądaj szczegóły terapii</li>
                     </ul>
 
-                    <a class="btn btn--outline btn--mint" href="#">Przejdź do harmonogramu →</a>
+                    <a class="btn btn--outline btn--mint" th:href="@{/status}">Przejdź do harmonogramu →</a>
                 </div>
 
                 <div class="feature__media">
@@ -140,7 +255,7 @@
                         <li>Aktywuj powiadomienia e-mail</li>
                     </ul>
 
-                    <a class="btn btn--outline btn--purple" href="#">Przejdź do ustawień profilu →</a>
+                    <a class="btn btn--outline btn--purple" th:href="@{/profile}">Przejdź do ustawień profilu →</a>
                 </div>
 
                 <div class="feature__media">
