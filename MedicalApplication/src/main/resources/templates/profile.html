@@ -13,7 +13,9 @@
 
 <header class="topbar">
     <div class="container topbar__inner">
-        <div class="brand">Logo</div>
+        <a class="brand" th:href="@{/home}">
+            <img class="brand__logo" th:src="@{/img/logo.jpg}" alt="YourMed" />
+        </a>
 
         <div class="topbar__greeting">
             Witaj <span th:text="${welcomeName}">Imię</span>, zdrowego dnia!
@@ -24,7 +26,6 @@
             <a class="nav__link nav__link--active" th:href="@{/profile}">Profil</a>
             <a class="nav__link" th:href="@{/status}">Status &amp; przegląd</a>
             <a class="nav__link" th:href="@{/medications}">Zarządzanie lekami</a>
-            <a class="nav__link" href="#">Zamienniki</a>
             <a class="nav__link" th:href="@{/doctor}" sec:authorize="hasRole('DOCTOR')">Dla lekarza</a>
         </nav>
 
@@ -35,7 +36,6 @@
             </button>
 
             <div class="user-menu__dropdown" role="menu">
-                <a class="user-menu__item" role="menuitem" href="/change-password">Zmień hasło</a>
                 <form th:action="@{/logout}" method="post" class="user-menu__logout">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                     <button type="submit" class="user-menu__item user-menu__item--danger user-menu__btnlink">

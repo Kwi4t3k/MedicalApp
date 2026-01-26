@@ -36,8 +36,15 @@
     align-items: center;
 }
 
-.hero__left{ width: 58%; position: relative; }
-.hero__right{ width: 38%; display: flex; justify-content: flex-end; }
+.hero__left{ width: 55%; position: relative; }
+.hero__right{
+  width: 45%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 10px;
+}
+
 
 .hero h1{
     margin: 0 0 1rem 0;
@@ -180,17 +187,6 @@
     background: rgba(255,255,255,.08);
 }
 
-.hero__character-placeholder{
-    width: min(100%, 360px);
-    aspect-ratio: 3 / 4;
-    display: grid;
-    place-items: center;
-    border-radius: 18px;
-    background: rgba(255,255,255,.14);
-    border: 1px dashed rgba(255,255,255,.28);
-    color: rgba(255,255,255,.85);
-    font-weight: 800;
-}
 
 /* BENEFITS */
 .benefits{
@@ -324,3 +320,43 @@
 .footer__col h4{ margin: 0 0 1rem 0; font-size: 1.2rem; }
 .footer__col p{ margin: 0; opacity: .95; }
 .footer__col a{ display: block; margin: .5rem 0; opacity: .95; }
+
+.hero__character{
+    width: clamp(1400px, 130vw, 2600px);
+    height: auto;
+    object-fit: contain;
+    display: block;
+    filter: drop-shadow(0 40px 90px rgba(0,0,0,0.4));
+}
+
+
+.topbar__inner{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+/* logo */
+.brand__logo{
+  height: 100px;
+  width: auto;
+  max-width: 420px;
+  display: block;
+  object-fit: contain;
+}
+
+
+.topbar__greeting{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav{
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 14px;
+}

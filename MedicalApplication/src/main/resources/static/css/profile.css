@@ -254,3 +254,34 @@ body.profile-body{
         grid-template-columns: 1fr;
     }
 }
+/* logo */
+.brand__logo{
+  height: 64px;
+  width: auto;
+  max-width: 320px;
+  display: block;
+  object-fit: contain;
+}
+
+
+.brand__logo{
+  height: 48px;
+  width: auto;
+  max-width: 220px;
+  display: block;
+  object-fit: contain;
+}
+
+.topbar__greeting{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav{
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 14px;
+}

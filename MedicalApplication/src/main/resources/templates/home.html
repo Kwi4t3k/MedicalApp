@@ -11,7 +11,10 @@
 
 <header class="topbar">
     <div class="container topbar__inner">
-        <div class="brand">Logo</div>
+        <a class="brand" th:href="@{/home}">
+            <img class="brand__logo" th:src="@{/img/logo.jpg}" alt="YourMed" />
+        </a>
+
 
         <div class="topbar__greeting">
             Witaj <span th:text="${welcomeName}">Imię</span>, zdrowego dnia!
@@ -22,7 +25,6 @@
             <a class="nav__link" th:href="@{/profile}">Profil</a>
             <a class="nav__link" th:href="@{/status}">Status &amp; przegląd</a>
             <a class="nav__link" th:href="@{/medications}">Zarządzanie lekami</a>
-            <a class="nav__link" href="#">Zamienniki</a>
             <a class="nav__link" th:href="@{/doctor}" sec:authorize="hasRole('DOCTOR')">Dla lekarza</a>
         </nav>
 
@@ -33,7 +35,6 @@
             </button>
 
             <div class="user-menu__dropdown" role="menu" aria-label="Ustawienia konta">
-                <a class="user-menu__item" role="menuitem" href="/change-password">Zmień hasło</a>
                 <form th:action="@{/logout}" method="post" class="user-menu__logout">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                     <button type="submit" class="user-menu__item user-menu__item--danger user-menu__btnlink">
@@ -188,7 +189,7 @@
 
             <div class="hero__right">
                 <!-- Mr Bean / postać -->
-                <img class="hero__character" src="" alt="Postać (np. Mr Bean)" />
+                <img class="hero__character" src="/img/doctor.jpg" alt="Postać (doctor)" />
             </div>
         </div>
     </section>
@@ -212,7 +213,6 @@
                         <li>Dodawaj leki wraz z dawkowaniem</li>
                         <li>Otrzymuj przypomnienia przed każdą dawką</li>
                         <li>Oznaczaj leki jako przyjęte i śledź historię</li>
-                        <li>Sprawdzaj tańsze zamienniki leków</li>
                     </ul>
 
                     <a class="btn btn--outline btn--mint" th:href="@{/medications}">Otwórz panel pacjenta →</a>
