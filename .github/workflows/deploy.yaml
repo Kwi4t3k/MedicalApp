@@ -26,6 +26,12 @@ jobs:
       - name: Build application
         run: mvn clean package -DskipTests
 
+      - name: Debug runner user
+        run: |
+          whoami
+          id
+          sudo -l
+
       - name: Restart application
         run: |
           sudo systemctl restart medicalapp
