@@ -22,6 +22,13 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
+          
+      - name: Debug paths
+        run: |
+          pwd
+          ls -la
+          git rev-parse HEAD
+          find . -maxdepth 3 -type d | sort
 
       - name: Build application
         run: mvn clean package -DskipTests
