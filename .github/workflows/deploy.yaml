@@ -40,9 +40,7 @@ jobs:
 
       - name: Deploy jar
         run: |
-          sudo cp target/MedicalApplication-0.0.1-SNAPSHOT.jar /home/skni/MedicalApp/MedicalApplication/target/MedicalApplication-0.0.1-SNAPSHOT.jar
-          sudo chown skni:skni /home/skni/MedicalApp/MedicalApplication/target/MedicalApplication-0.0.1-SNAPSHOT.jar
-
+          cp target/MedicalApplication-0.0.1-SNAPSHOT.jar /home/skni/MedicalApp/MedicalApplication/target/MedicalApplication-0.0.1-SNAPSHOT.jar
 
       - name: Restart application
         run: |
