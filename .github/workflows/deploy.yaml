@@ -16,15 +16,32 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
+        with:
+          ref: main
+          fetch-depth: 0
+          clean: true
+      
+      - name: Force sync to latest main
+        run: |
+          git remote -v
+          git fetch origin main
+          git checkout main
+          git reset --hard origin/main
+          git clean -fd
+      
+      - name: Debug git state
+        run: |
+          echo "GITHUB_REF=$GITHUB_REF"
+          echo "GITHUB_SHA=$GITHUB_SHA"
+          git rev-parse HEAD
+          git log --oneline -n 10
+          git status
+          
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
-          
-      - name: Show last commits
-        run: git log --oneline -n 5
 
       - name: Build application
         run: mvn clean package -DskipTests
