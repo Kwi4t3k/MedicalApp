@@ -23,12 +23,14 @@ jobs:
           distribution: temurin
           java-version: '21'
           
-      - name: Debug paths
+      - name: Debug GitHub context
         run: |
-          pwd
-          ls -la
+          echo "GITHUB_REF=$GITHUB_REF"
+          echo "GITHUB_SHA=$GITHUB_SHA"
+          echo "GITHUB_WORKFLOW=$GITHUB_WORKFLOW"
+          echo "GITHUB_ACTOR=$GITHUB_ACTOR"
           git rev-parse HEAD
-          find . -maxdepth 3 -type d | sort
+          git log -1 --oneline
 
       - name: Build application
         run: mvn clean package -DskipTests
